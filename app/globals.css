@@ -7,6 +7,25 @@ body { margin: 0; background: #242424; color: #fff; font-family: "DM Sans", sans
 button, input { font: inherit; }
 button { cursor: pointer; }
 .auth-page { min-height: 100vh; background: var(--navy); }
+.authenticated-content { --navbar-height: 88px; min-height: calc(100vh - var(--navbar-height)); background: var(--navy); }
+.app-navbar-shell { position: sticky; top: 0; z-index: 20; padding: 1rem clamp(1rem, 3.2vw, 2.75rem) 0; background: var(--navy); }
+.app-navbar { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) 44px 44px; align-items: center; gap: clamp(.65rem, 2.2vw, 1.8rem); width: min(100%, 1200px); min-height: 58px; margin: 0 auto; padding: .25rem .85rem .25rem 1rem; border-radius: 16px; background: #302d42; }
+.app-navbar-brand { color: #fff; font-family: "Playfair Display", serif; font-size: 2.1rem; line-height: 1; text-decoration: none; white-space: nowrap; }
+.app-navbar-search { min-width: 0; }
+.app-navbar-search input { width: 100%; height: 40px; border: 0; border-radius: 24px; outline: 2px solid transparent; background: #4b4b52; color: #fff; padding: 0 .95rem; }
+.app-navbar-search input::placeholder { color: #f0eff3; opacity: 1; }
+.app-navbar-search input:focus { outline-color: var(--blue); }
+.create-challenge-button { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; color: #fff; font-size: 2.6rem; font-weight: 300; line-height: 1; text-decoration: none; transition: background .15s, color .15s; }
+.create-challenge-button:hover { background: #454156; color: var(--blue); }
+.account-menu { position: relative; }
+.account-avatar { display: grid; width: 40px; height: 40px; place-items: center; border: 0; border-radius: 50%; background: #d7d7dc; color: #29283a; font-size: .95rem; font-weight: 600; }
+.account-avatar:hover, .account-avatar[aria-expanded="true"] { background: #fff; }
+.account-popover { position: absolute; top: calc(100% + .65rem); right: 0; z-index: 30; display: grid; gap: .3rem; width: min(280px, calc(100vw - 2rem)); padding: .9rem; border: 1px solid #555263; border-radius: 10px; background: #302d42; box-shadow: 0 12px 28px #14132655; }
+.account-name { color: #fff; font-size: .88rem; font-weight: 600; }
+.account-email { overflow-wrap: anywhere; color: #d1cfda; font-size: .74rem; }
+.account-logout { margin-top: .45rem; border: 0; border-radius: 6px; background: #454156; color: #fff; padding: .55rem .7rem; text-align: left; }
+.account-logout:hover { background: #575268; }
+.account-error { margin: .35rem 0 0; color: #ff9da5; font-size: .75rem; }
 .welcome-page { display: grid; place-items: center; padding: 4rem 1.5rem; }
 .welcome-content { text-align: center; transform: translateY(-5vh); }
 .brand { margin: 0; color: #fff; font-family: "Playfair Display", serif; font-size: clamp(3rem, 6vw, 4.25rem); font-weight: 500; letter-spacing: 0; }
@@ -43,13 +62,10 @@ input:focus { outline-color: var(--blue); }
 .switch-button { font-weight: 600; text-decoration: underline; }
 @media (max-width: 480px) { .welcome-page { padding: 2rem 1rem; } .form-page { padding: 2.5rem 1rem; } .form-page > .brand-link { margin-bottom: 2rem; } .auth-panel { padding: 1.8rem 1rem 1.5rem; } .brand { font-size: 3.2rem; } .welcome-actions { flex-direction: column; width: min(100%, 220px); } }
 
-.logged-home-page { display: grid; place-items: center; padding: 3rem 1.5rem; }
+.logged-home-page { display: grid; place-items: center; min-height: calc(100vh - 88px); padding: 2.5rem 1.5rem; }
 .logged-home-content { width: min(100%, 760px); text-align: center; }
+.logged-home-title { margin: 0; font-size: 1.45rem; font-weight: 500; }
 .logged-home-content p { margin: 1.2rem 0 1.35rem; font-size: .94rem; line-height: 1.2; }
-.challenge-search-wrap { margin: 0 auto 1rem; width: min(100%, 620px); }
-.challenge-search-wrap input[type="search"] { width: 100%; border: 0; border-radius: 10px; background: #3d4f5c; color: #f4f7ff; padding: .72rem .95rem; outline: 2px solid transparent; }
-.challenge-search-wrap input[type="search"]::placeholder { color: #cad5e0; }
-.challenge-search-wrap input[type="search"]:focus { outline-color: var(--blue); }
 .challenge-list-panel { margin: 0 auto; width: min(100%, 620px); border-radius: 12px; background: #343434; padding: .72rem; text-align: left; }
 .challenge-list-panel h2 { margin: 0 0 .42rem; font-size: .85rem; font-weight: 500; color: #d7e0ec; }
 .challenge-filters { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; margin-bottom: .65rem; }
@@ -62,7 +78,7 @@ input:focus { outline-color: var(--blue); }
 .challenge-meta { font-size: .69rem; color: #d9deea; }
 .empty-challenges { margin: .4rem 0 0; color: #d3d8e3; font-size: .8rem; }
 
-.word-board-page { display: grid; place-items: center; padding: 3rem 1.5rem; }
+.word-board-page { display: grid; place-items: center; min-height: calc(100vh - 88px); padding: 3rem 1.5rem; }
 .word-board-content { width: min(100%, 760px); text-align: center; }
 .word-board-subtitle { margin: .55rem 0 1.8rem; font-size: .86rem; color: #d9deeb; }
 .word-board-header { margin: 0 auto .45rem; width: min(100%, 620px); display: grid; grid-template-columns: 1fr 1fr; color: #d6deea; font-size: .74rem; }
@@ -95,6 +111,16 @@ input:focus { outline-color: var(--blue); }
 }
 .word-tile.dragging { opacity: .45; transform: scale(.98); }
 .word-tile.drop-target { box-shadow: inset 0 0 0 2px #79abf5; }
+
+@media (max-width: 600px) {
+	.app-navbar-shell { padding: .75rem .75rem 0; }
+	.app-navbar { grid-template-columns: auto minmax(0, 1fr) 38px 38px; gap: .4rem; min-height: 54px; padding: .25rem .55rem .25rem .7rem; border-radius: 13px; }
+	.app-navbar-brand { font-size: 1.55rem; }
+	.app-navbar-search input { height: 36px; padding-inline: .7rem; font-size: .78rem; }
+	.create-challenge-button { width: 36px; height: 36px; font-size: 2.1rem; }
+	.account-avatar { width: 34px; height: 34px; }
+	.logged-home-page, .word-board-page { min-height: calc(100vh - 66px); }
+}
 
 @keyframes wrong-selection-flash {
 	0% { transform: scale(1); filter: brightness(1); }

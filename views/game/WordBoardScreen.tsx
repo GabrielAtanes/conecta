@@ -1,7 +1,6 @@
 "use client";
 
 import { useWordBoardController } from "@/controllers/useWordBoardController";
-import Link from "next/link";
 
 export default function WordBoardScreen() {
   const board = useWordBoardController();
@@ -9,10 +8,6 @@ export default function WordBoardScreen() {
   return (
     <main className="auth-page word-board-page">
       <section className="word-board-content">
-        <Link className="brand-link" href="/desafios" aria-label="Voltar para lista de desafios">
-          <h1 className="brand">Conecta</h1>
-        </Link>
-
         <p className="word-board-subtitle">{board.board.title}</p>
 
         <header className="word-board-header">

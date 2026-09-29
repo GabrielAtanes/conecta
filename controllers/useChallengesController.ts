@@ -22,8 +22,8 @@ function sortChallenges(challenges: Challenge[], mode: SortMode) {
   return copy;
 }
 
-export function useChallengesController() {
-  const [search, setSearch] = useState("");
+export function useChallengesController(initialSearch = "") {
+  const [search, setSearch] = useState(initialSearch);
   const [sortMode, setSortMode] = useState<SortMode>("az");
 
   const filteredChallenges = useMemo(() => {

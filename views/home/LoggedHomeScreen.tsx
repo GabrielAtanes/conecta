@@ -3,26 +3,14 @@
 import { useChallengesController } from "@/controllers/useChallengesController";
 import Link from "next/link";
 
-export default function LoggedHomeScreen() {
-  const challenges = useChallengesController();
+export default function LoggedHomeScreen({ initialSearch }: { initialSearch: string }) {
+  const challenges = useChallengesController(initialSearch);
 
   return (
     <main className="auth-page logged-home-page">
       <section className="logged-home-content">
-        <Link className="brand-link" href="/" aria-label="Ir para a página inicial">
-          <h1 className="brand">Conecta</h1>
-        </Link>
+        <h1 className="logged-home-title">Desafios</h1>
         <p>Criando conexões através de jogos.<br />Resolva os desafios de outros jogadores.</p>
-
-        <div className="challenge-search-wrap">
-          <input
-            type="search"
-            value={challenges.search}
-            onChange={(event) => challenges.setSearch(event.target.value)}
-            placeholder="Pesquisa"
-            aria-label="Pesquisa de desafios"
-          />
-        </div>
 
         <section className="challenge-list-panel">
           <h2>Filtros</h2>

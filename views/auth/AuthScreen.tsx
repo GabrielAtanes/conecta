@@ -12,7 +12,7 @@ function Brand({ onClick }: { onClick?: () => void }) {
 }
 
 export default function AuthScreen() {
-  const auth = useAuthController();
+  const auth = useAuthController("login");
 
   return (
     <main className="auth-page form-page">
@@ -33,7 +33,10 @@ export default function AuthScreen() {
             <label className="remember-option"><input type="checkbox" checked={auth.rememberMe} onChange={(event) => auth.setRememberMe(event.target.checked)} /> <span>Lembre-se de mim</span></label>
             <button type="button" className="text-button">Esqueceu sua senha?</button>
         </div>
-          <button className="submit-button" type="submit">Login</button>
+          {auth.error && <p className="auth-error" role="alert">{auth.error}</p>}
+          <button className="submit-button" type="submit" disabled={auth.isSubmitting}>
+            {auth.isSubmitting ? "Entrando..." : "Login"}
+          </button>
         </form>
         <div className="divider"><span>ou</span></div>
         <button type="button" className="google-button">Conecte-se via Google</button>

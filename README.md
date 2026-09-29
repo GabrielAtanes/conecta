@@ -1,5 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Backend local
+
+O backend usa PostgreSQL. Copie `.env.example` para `.env.local`, gere um segredo e configure `AUTH_SECRET` nesse arquivo:
+
+```powershell
+Copy-Item .env.example .env.local
+node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"
+docker compose up -d
+npm run dev
+```
+
+O container cria as tabelas na primeira inicialização e publica o PostgreSQL na porta `5433` para evitar conflito com instalações locais. O cadastro e login usam hash bcrypt e sessão assinada em cookie `httpOnly`. A senha definida no Compose é apenas para desenvolvimento. Para parar o banco, execute `docker compose down`.
+
 ## Getting Started
 
 First, run the development server:

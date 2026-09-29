@@ -4,7 +4,7 @@ import { useAuthController } from "@/controllers/useAuthController";
 import Link from "next/link";
 
 export default function SignUpScreen() {
-  const auth = useAuthController();
+  const auth = useAuthController("signup");
 
   return (
     <main className="auth-page form-page">
@@ -21,13 +21,16 @@ export default function SignUpScreen() {
           </label>
           <label>
             <span>Nome de usuário</span>
-            <input value={auth.form.username} onChange={(event) => auth.updateField("username", event.target.value)} required />
+            <input value={auth.form.username} onChange={(event) => auth.updateField("username", event.target.value)} minLength={3} maxLength={24} required />
           </label>
           <label>
             <span>Senha</span>
-            <input type="password" value={auth.form.password} onChange={(event) => auth.updateField("password", event.target.value)} required />
+            <input type="password" value={auth.form.password} onChange={(event) => auth.updateField("password", event.target.value)} minLength={8} required />
           </label>
-          <button className="submit-button" type="submit">Sign-up</button>
+          {auth.error && <p className="auth-error" role="alert">{auth.error}</p>}
+          <button className="submit-button" type="submit" disabled={auth.isSubmitting}>
+            {auth.isSubmitting ? "Criando conta..." : "Criar conta"}
+          </button>
         </form>
         <div className="divider"><span>ou</span></div>
         <button type="button" className="google-button">Conecte-se via Google</button>

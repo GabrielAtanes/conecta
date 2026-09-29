@@ -22,6 +22,7 @@ button { cursor: pointer; }
 .auth-panel { width: min(100%, 395px); border-radius: 17px; background: var(--panel); color: #101522; padding: 2.35rem 1.4rem 1.9rem; }
 .auth-panel h2 { margin: 0; text-align: center; font-size: 1.65rem; font-weight: 500; }
 .panel-intro { margin: .35rem 0 1.4rem; text-align: center; font-size: .85rem; }
+.auth-error { margin: .8rem 0 0; color: #a11d2b; text-align: center; font-size: .88rem; }
 form { display: grid; gap: .68rem; }
 form label:not(.remember-option) { display: grid; gap: .3rem; font-size: .78rem; }
 input[type="email"], input[type="password"], input:not([type]) { width: 100%; border: 0; border-radius: 6px; background: #fff; color: #172035; padding: .78rem .85rem; outline: 2px solid transparent; }
@@ -33,6 +34,7 @@ input:focus { outline-color: var(--blue); }
 .text-button:hover { text-decoration: underline; }
 .submit-button { margin: .9rem auto 0; width: 240px; border: 2px solid var(--ink); border-radius: 24px; background: transparent; color: var(--ink); padding: .47rem; font-size: 1.25rem; transition: background .2s, color .2s; }
 .submit-button:hover { background: var(--ink); color: #fff; }
+.submit-button:disabled { cursor: wait; opacity: .65; }
 .divider { display: flex; align-items: center; gap: .65rem; margin: 1rem 0 .85rem; font-size: .7rem; }
 .divider::before, .divider::after { content: ""; height: 1px; flex: 1; background: var(--ink); }
 .google-button { width: 100%; border: 0; border-radius: 20px; background: #eee; color: #172035; padding: .55rem; font-size: .68rem; }

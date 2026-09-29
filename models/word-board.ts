@@ -13,6 +13,20 @@ export type WordGroup = {
   connection: string;
 };
 
+export type WordBoard = {
+  id: string;
+  title: string;
+  publishedAt: string;
+  errorCountLabel: string;
+  groups: WordGroup[];
+  words: WordTile[];
+  creatorUsername: string;
+  attempt: {
+    errorCount: number;
+    completed: boolean;
+  };
+};
+
 export const wordBoardMock = {
   title: "Encontre os grupos de 4 palavras",
   publishedAt: "24 ago 2026",

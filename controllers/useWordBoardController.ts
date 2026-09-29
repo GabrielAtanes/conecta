@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { WordGroupColor, WordTile, wordBoardMock } from "@/models/word-board";
+import { WordBoard, WordGroupColor, WordTile } from "@/models/word-board";
 
 const MAX_SELECTED_WORDS = 4;
 const WRONG_SELECTION_FEEDBACK_MS = 420;
@@ -35,23 +35,25 @@ function shuffleList<T>(list: T[]) {
   return copy;
 }
 
-const groupColorById = new Map(
-  wordBoardMock.groups.map((group) => [group.id, group.color] as const),
-);
-
-const groupById = new Map(
-  wordBoardMock.groups.map((group) => [group.id, group] as const),
-);
-
-export function useWordBoardController() {
-  const [tiles, setTiles] = useState<WordTile[]>(() => shuffleList(wordBoardMock.words));
+export function useWordBoardController(
+  board: WordBoard,
+  onProgress?: (errorCount: number, completed: boolean) => void,
+) {
+  const groupColorById = new Map(board.groups.map((group) => [group.id, group.color] as const));
+  const groupById = new Map(board.groups.map((group) => [group.id, group] as const));
+  const [tiles, setTiles] = useState<WordTile[]>(() => shuffleList(board.words));
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [invalidIds, setInvalidIds] = useState<Set<string>>(new Set());
   const [correctIds, setCorrectIds] = useState<Set<string>>(new Set());
-  const [solvedGroupIds, setSolvedGroupIds] = useState<Set<string>>(new Set());
-  const [solvedGroupOrder, setSolvedGroupOrder] = useState<string[]>([]);
+  const [solvedGroupIds, setSolvedGroupIds] = useState<Set<string>>(
+    () => board.attempt.completed ? new Set(board.groups.map((group) => group.id)) : new Set(),
+  );
+  const [solvedGroupOrder, setSolvedGroupOrder] = useState<string[]>(
+    () => board.attempt.completed ? board.groups.map((group) => group.id) : [],
+  );
   const [isResolvingSelection, setIsResolvingSelection] = useState(false);
-  const [errorCount, setErrorCount] = useState(0);
+  const [errorCount, setErrorCount] = useState(board.attempt.errorCount);
+  const [isCompleted, setIsCompleted] = useState(board.attempt.completed);
   const [draggedTileId, setDraggedTileId] = useState<string | null>(null);
   const [overTileId, setOverTileId] = useState<string | null>(null);
   const wrongSelectionTimeoutRef = useRef<number | null>(null);
@@ -63,7 +65,7 @@ export function useWordBoardController() {
     }
   }
 
-  function startWrongSelectionFeedback(ids: Set<string>) {
+  function startWrongSelectionFeedback(ids: Set<string>, nextErrorCount: number) {
     setIsResolvingSelection(true);
     setInvalidIds(new Set(ids));
     setCorrectIds(new Set());
@@ -74,11 +76,12 @@ export function useWordBoardController() {
       setInvalidIds(new Set());
       setCorrectIds(new Set());
       setIsResolvingSelection(false);
+      onProgress?.(nextErrorCount, false);
       wrongSelectionTimeoutRef.current = null;
     }, WRONG_SELECTION_FEEDBACK_MS);
   }
 
-  function startCorrectSelectionFeedback(groupId: string, ids: Set<string>) {
+  function startCorrectSelectionFeedback(groupId: string, ids: Set<string>, completesChallenge: boolean) {
     setIsResolvingSelection(true);
     setCorrectIds(new Set(ids));
     setInvalidIds(new Set());
@@ -102,6 +105,10 @@ export function useWordBoardController() {
       setSelectedIds(new Set());
       setCorrectIds(new Set());
       setIsResolvingSelection(false);
+      if (completesChallenge) {
+        setIsCompleted(true);
+        onProgress?.(errorCount, true);
+      }
       wrongSelectionTimeoutRef.current = null;
     }, CORRECT_SELECTION_FEEDBACK_MS);
   }
@@ -143,16 +150,21 @@ export function useWordBoardController() {
     const sameGroup = selectedTiles.every((tile) => tile.groupId === firstTile.groupId);
 
     if (sameGroup) {
-      startCorrectSelectionFeedback(firstTile.groupId, nextSelectedIds);
+      startCorrectSelectionFeedback(
+        firstTile.groupId,
+        nextSelectedIds,
+        solvedGroupIds.size + 1 === board.groups.length,
+      );
       return;
     }
 
-    setErrorCount((current) => current + 1);
-    startWrongSelectionFeedback(nextSelectedIds);
+    const nextErrorCount = errorCount + 1;
+    setErrorCount(nextErrorCount);
+    startWrongSelectionFeedback(nextSelectedIds, nextErrorCount);
   }
 
   function toggleTile(tileId: string) {
-    if (isResolvingSelection) {
+    if (isResolvingSelection || isCompleted) {
       return;
     }
 
@@ -180,7 +192,7 @@ export function useWordBoardController() {
   }
 
   function onDragStart(tileId: string) {
-    if (isResolvingSelection || isTileSolved(tileId)) {
+    if (isResolvingSelection || isCompleted || isTileSolved(tileId)) {
       return;
     }
 
@@ -227,7 +239,7 @@ export function useWordBoardController() {
         return null;
       }
 
-      const groupTiles = wordBoardMock.words.filter((tile) => tile.groupId === groupId);
+      const groupTiles = board.words.filter((tile) => tile.groupId === groupId);
 
       return {
         id: group.id,
@@ -240,7 +252,7 @@ export function useWordBoardController() {
     .filter((group): group is NonNullable<typeof group> => Boolean(group));
 
   return {
-    board: wordBoardMock,
+    board,
     unsolvedTiles,
     solvedGroups,
     errorCount,
@@ -248,6 +260,7 @@ export function useWordBoardController() {
     invalidIds,
     correctIds,
     isResolvingSelection,
+    isCompleted,
     draggedTileId,
     overTileId,
     getTileSolvedColor,

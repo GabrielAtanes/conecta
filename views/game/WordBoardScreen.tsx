@@ -1,9 +1,18 @@
 "use client";
 
 import { useWordBoardController } from "@/controllers/useWordBoardController";
+import { WordBoard } from "@/models/word-board";
 
-export default function WordBoardScreen() {
-  const board = useWordBoardController();
+export default function WordBoardScreen({ initialBoard }: { initialBoard: WordBoard }) {
+  async function saveProgress(errorCount: number, completed: boolean) {
+    await fetch(`/api/challenges/${initialBoard.id}/attempt`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ errorCount, completed }),
+    });
+  }
+
+  const board = useWordBoardController(initialBoard, saveProgress);
 
   return (
     <main className="auth-page word-board-page">
@@ -11,9 +20,16 @@ export default function WordBoardScreen() {
         <p className="word-board-subtitle">{board.board.title}</p>
 
         <header className="word-board-header">
+          <span>Criado por: {board.board.creatorUsername}</span>
           <span>Publicado em: {board.board.publishedAt}</span>
           <span>{board.board.errorCountLabel}: {board.errorCount}</span>
         </header>
+
+        {board.isCompleted && (
+          <p className="challenge-completed-message" role="status">
+            Você já concluiu este desafio.
+          </p>
+        )}
 
         {board.solvedGroups.length > 0 && (
           <section className="solved-groups" aria-label="Grupos resolvidos">
@@ -40,7 +56,7 @@ export default function WordBoardScreen() {
                 onDrop={() => board.onDrop(tile.id)}
                 onDragEnd={board.onDragEnd}
                 aria-pressed={board.selectedIds.has(tile.id)}
-                disabled={board.isResolvingSelection}
+                disabled={board.isResolvingSelection || board.isCompleted}
                 className={[
                   "word-tile",
                   board.selectedIds.has(tile.id) ? "selected" : "",

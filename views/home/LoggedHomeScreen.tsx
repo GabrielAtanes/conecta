@@ -1,10 +1,17 @@
 "use client";
 
 import { useChallengesController } from "@/controllers/useChallengesController";
+import { Challenge } from "@/models/challenge";
 import Link from "next/link";
 
-export default function LoggedHomeScreen({ initialSearch }: { initialSearch: string }) {
-  const challenges = useChallengesController(initialSearch);
+export default function LoggedHomeScreen({
+  challenges: availableChallenges,
+  initialSearch,
+}: {
+  challenges: Challenge[];
+  initialSearch: string;
+}) {
+  const challenges = useChallengesController(availableChallenges, initialSearch);
 
   return (
     <main className="auth-page logged-home-page">
@@ -40,10 +47,10 @@ export default function LoggedHomeScreen({ initialSearch }: { initialSearch: str
 
           <div className="challenge-cards">
             {challenges.filteredChallenges.map((challenge) => (
-              <Link key={challenge.id} href="/jogo" className="challenge-card">
+              <Link key={challenge.id} href={`/jogo?challenge=${challenge.id}`} className="challenge-card">
                 <span className="challenge-title">{challenge.title}</span>
                 <span className="challenge-meta">
-                  {new Date(challenge.publishedAt).toLocaleDateString("pt-BR")} · {challenge.errorCount} erros
+                  Criado por {challenge.creatorUsername} · {new Date(challenge.publishedAt).toLocaleDateString("pt-BR")}
                 </span>
               </Link>
             ))}

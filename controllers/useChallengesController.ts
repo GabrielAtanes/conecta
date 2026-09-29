@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Challenge, challengesMock } from "@/models/challenge";
+import { Challenge } from "@/models/challenge";
 
 type SortMode = "az" | "errors" | "date";
 
@@ -22,12 +22,12 @@ function sortChallenges(challenges: Challenge[], mode: SortMode) {
   return copy;
 }
 
-export function useChallengesController(initialSearch = "") {
+export function useChallengesController(challenges: Challenge[], initialSearch = "") {
   const [search, setSearch] = useState(initialSearch);
   const [sortMode, setSortMode] = useState<SortMode>("az");
 
   const filteredChallenges = useMemo(() => {
-    const bySearch = challengesMock.filter((challenge) => {
+    const bySearch = challenges.filter((challenge) => {
       const query = search.trim().toLowerCase();
       if (!query) {
         return true;
@@ -37,7 +37,7 @@ export function useChallengesController(initialSearch = "") {
     });
 
     return sortChallenges(bySearch, sortMode);
-  }, [search, sortMode]);
+  }, [challenges, search, sortMode]);
 
   return {
     search,

@@ -1,16 +1,3 @@
-CREATE TABLE IF NOT EXISTS users (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  email text NOT NULL,
-  username text NOT NULL,
-  password_hash text,
-  google_sub text,
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE UNIQUE INDEX IF NOT EXISTS users_email_lower_unique_idx ON users (lower(email));
-CREATE UNIQUE INDEX IF NOT EXISTS users_username_lower_unique_idx ON users (lower(username));
-CREATE UNIQUE INDEX IF NOT EXISTS users_google_sub_unique_idx ON users (google_sub) WHERE google_sub IS NOT NULL;
-
 CREATE TABLE IF NOT EXISTS challenges (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   author_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -41,15 +28,3 @@ CREATE TABLE IF NOT EXISTS challenge_words (
 CREATE INDEX IF NOT EXISTS challenges_published_at_idx
   ON challenges (published_at DESC)
   WHERE status = 'published';
-
-CREATE TABLE IF NOT EXISTS challenge_attempts (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  challenge_id uuid NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
-  error_count integer NOT NULL DEFAULT 0 CHECK (error_count >= 0),
-  started_at timestamptz NOT NULL DEFAULT now(),
-  completed_at timestamptz,
-  UNIQUE (user_id, challenge_id)
-);
-
-CREATE INDEX IF NOT EXISTS challenge_attempts_user_idx ON challenge_attempts (user_id);

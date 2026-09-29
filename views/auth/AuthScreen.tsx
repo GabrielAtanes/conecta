@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthController } from "@/controllers/useAuthController";
+import GoogleAuthButton from "@/views/auth/GoogleAuthButton";
 import Link from "next/link";
 
 function Brand({ onClick }: { onClick?: () => void }) {
@@ -39,7 +40,7 @@ export default function AuthScreen() {
           </button>
         </form>
         <div className="divider"><span>ou</span></div>
-        <button type="button" className="google-button">Conecte-se via Google</button>
+        <GoogleAuthButton />
         <p className="switch-copy">
           Ainda não tem uma conta?{" "}
           <Link className="text-button switch-button" href="/signup">Cadastre-se</Link>

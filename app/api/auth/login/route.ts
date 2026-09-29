@@ -22,11 +22,11 @@ export async function POST(request: Request) {
       id: string;
       email: string;
       username: string;
-      password_hash: string;
+      password_hash: string | null;
     }>("SELECT id, email, username, password_hash FROM users WHERE lower(email) = $1", [email]);
     const user = result.rows[0];
 
-    if (!user || !(await compare(password, user.password_hash))) {
+    if (!user?.password_hash || !(await compare(password, user.password_hash))) {
       return Response.json({ error: "E-mail ou senha inválidos." }, { status: 401 });
     }
 

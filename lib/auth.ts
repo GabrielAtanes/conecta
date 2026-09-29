@@ -1,6 +1,7 @@
 import "server-only";
 
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import { SignJWT, jwtVerify } from "jose";
 
 const sessionCookieName = "conecta_session";
@@ -16,6 +17,22 @@ function getAuthSecret() {
 }
 
 export async function createSession(userId: string, rememberMe: boolean) {
+  const { token, maxAge } = await createSessionToken(userId, rememberMe);
+  const cookieStore = await cookies();
+  cookieStore.set(sessionCookieName, token, sessionCookieOptions(rememberMe, maxAge));
+}
+
+export async function setSessionCookie(
+  response: NextResponse,
+  userId: string,
+  rememberMe: boolean,
+) {
+  const { token, maxAge } = await createSessionToken(userId, rememberMe);
+  response.cookies.set(sessionCookieName, token, sessionCookieOptions(rememberMe, maxAge));
+  return response;
+}
+
+async function createSessionToken(userId: string, rememberMe: boolean) {
   const maxAge = rememberMe ? sessionCookieLifetime * 30 : sessionCookieLifetime;
   const token = await new SignJWT({})
     .setProtectedHeader({ alg: "HS256" })
@@ -24,14 +41,17 @@ export async function createSession(userId: string, rememberMe: boolean) {
     .setExpirationTime(`${maxAge}s`)
     .sign(getAuthSecret());
 
-  const cookieStore = await cookies();
-  cookieStore.set(sessionCookieName, token, {
+  return { token, maxAge };
+}
+
+function sessionCookieOptions(rememberMe: boolean, maxAge: number) {
+  return {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
     ...(rememberMe ? { maxAge } : {}),
-  });
+  } as const;
 }
 
 export async function getSessionUserId() {

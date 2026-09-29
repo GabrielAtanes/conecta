@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthController } from "@/controllers/useAuthController";
+import GoogleAuthButton from "@/views/auth/GoogleAuthButton";
 import Link from "next/link";
 
 export default function SignUpScreen() {
@@ -33,7 +34,7 @@ export default function SignUpScreen() {
           </button>
         </form>
         <div className="divider"><span>ou</span></div>
-        <button type="button" className="google-button">Conecte-se via Google</button>
+        <GoogleAuthButton />
         <p className="switch-copy">
           Já tem uma conta?{" "}
           <Link className="text-button switch-button" href="/login">Entrar</Link>

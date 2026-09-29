@@ -13,6 +13,14 @@ npm run dev
 
 O container cria as tabelas na primeira inicialização e publica o PostgreSQL na porta `5433` para evitar conflito com instalações locais. O cadastro e login usam hash bcrypt e sessão assinada em cookie `httpOnly`. A senha definida no Compose é apenas para desenvolvimento. Para parar o banco, execute `docker compose down`.
 
+### Login com Google
+
+No Google Cloud Console, crie um OAuth Client ID do tipo aplicação Web. Cadastre `http://localhost:3000/api/auth/google/callback` como URI de redirecionamento autorizado e preencha `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` no `.env.local`. `APP_URL` precisa corresponder exatamente à origem usada no navegador. Contas existentes com o mesmo e-mail verificado pelo Google são vinculadas à identidade Google no primeiro login. Em um banco que já existia, aplique a migração após subir o Compose:
+
+```powershell
+docker compose exec -T postgres psql -U conecta -d conecta -f /migrations/002_google_signin.sql
+```
+
 ## Getting Started
 
 First, run the development server:

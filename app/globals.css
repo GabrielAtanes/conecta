@@ -38,6 +38,7 @@ input:focus { outline-color: var(--blue); }
 .divider { display: flex; align-items: center; gap: .65rem; margin: 1rem 0 .85rem; font-size: .7rem; }
 .divider::before, .divider::after { content: ""; height: 1px; flex: 1; background: var(--ink); }
 .google-button { width: 100%; border: 0; border-radius: 20px; background: #eee; color: #172035; padding: .55rem; font-size: .68rem; }
+.google-button:disabled { cursor: wait; opacity: .65; }
 .switch-copy { margin: 1.2rem 0 0; text-align: center; font-size: .76rem; }
 .switch-button { font-weight: 600; text-decoration: underline; }
 @media (max-width: 480px) { .welcome-page { padding: 2rem 1rem; } .form-page { padding: 2.5rem 1rem; } .form-page > .brand-link { margin-bottom: 2rem; } .auth-panel { padding: 1.8rem 1rem 1.5rem; } .brand { font-size: 3.2rem; } .welcome-actions { flex-direction: column; width: min(100%, 220px); } }

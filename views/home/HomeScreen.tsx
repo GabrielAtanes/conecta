@@ -11,7 +11,6 @@ export default function HomeScreen() {
         <div className="welcome-actions">
           <Link className="primary-button welcome-action-button" href="/login">Login</Link>
           <Link className="primary-button welcome-action-button" href="/signup">Sign-up</Link>
-          <Link className="primary-button welcome-action-button" href="/desafios">Modo logado</Link>
         </div>
       </section>
     </main>

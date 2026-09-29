@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useWordBoardController } from "@/controllers/useWordBoardController";
 import { WordBoard } from "@/models/word-board";
 
 export default function WordBoardScreen({ initialBoard }: { initialBoard: WordBoard }) {
+  const [showVictoryCard, setShowVictoryCard] = useState(false);
+
   async function saveProgress(errorCount: number, completed: boolean) {
     await fetch(`/api/challenges/${initialBoard.id}/attempt`, {
       method: "POST",
@@ -12,7 +15,12 @@ export default function WordBoardScreen({ initialBoard }: { initialBoard: WordBo
     });
   }
 
-  const board = useWordBoardController(initialBoard, saveProgress);
+  function handleProgress(errorCount: number, completed: boolean) {
+    void saveProgress(errorCount, completed);
+    if (completed) setShowVictoryCard(true);
+  }
+
+  const board = useWordBoardController(initialBoard, handleProgress);
 
   return (
     <main className="auth-page word-board-page">
@@ -27,7 +35,7 @@ export default function WordBoardScreen({ initialBoard }: { initialBoard: WordBo
 
         {board.isCompleted && (
           <p className="challenge-completed-message" role="status">
-            Você já concluiu este desafio.
+            Desafio concluído · {board.errorCount} {board.errorCount === 1 ? "erro" : "erros"}
           </p>
         )}
 
@@ -72,6 +80,20 @@ export default function WordBoardScreen({ initialBoard }: { initialBoard: WordBo
           </section>
         )}
       </section>
+
+      {showVictoryCard && (
+        <div className="victory-overlay" role="presentation">
+          <section className="victory-card" role="dialog" aria-modal="true" aria-labelledby="victory-title">
+            <span className="victory-mark" aria-hidden="true">✓</span>
+            <p className="victory-kicker">Desafio concluído</p>
+            <h2 id="victory-title">Você venceu!</h2>
+            <p>Você encontrou todos os grupos em {board.errorCount} {board.errorCount === 1 ? "erro" : "erros"}.</p>
+            <button type="button" className="victory-dismiss" onClick={() => setShowVictoryCard(false)}>
+              Continuar
+            </button>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

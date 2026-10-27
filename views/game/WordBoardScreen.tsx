@@ -4,8 +4,22 @@ import { useState } from "react";
 import { useWordBoardController } from "@/controllers/useWordBoardController";
 import { WordBoard } from "@/models/word-board";
 
+const REPORT_REASONS = [
+  { value: "palavras_ofensivas", label: "Palavras ofensivas" },
+  { value: "preconceituoso", label: "Preconceituoso" },
+  { value: "spam_propaganda", label: "Spam ou propaganda" },
+  { value: "conteudo_improprio", label: "Conteúdo impróprio" },
+  { value: "outro", label: "Outro motivo" },
+] as const;
+
 export default function WordBoardScreen({ initialBoard }: { initialBoard: WordBoard }) {
   const [showVictoryCard, setShowVictoryCard] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [selectedReason, setSelectedReason] = useState<(typeof REPORT_REASONS)[number]["value"]>(REPORT_REASONS[0].value);
+  const [details, setDetails] = useState("");
+  const [reportFeedback, setReportFeedback] = useState("");
+  const [reportError, setReportError] = useState("");
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
 
   async function saveProgress(errorCount: number, completed: boolean) {
     await fetch(`/api/challenges/${initialBoard.id}/attempt`, {
@@ -13,6 +27,39 @@ export default function WordBoardScreen({ initialBoard }: { initialBoard: WordBo
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ errorCount, completed }),
     });
+  }
+
+  async function handleReportSubmit() {
+    setReportError("");
+    setReportFeedback("");
+    setIsSubmittingReport(true);
+
+    try {
+      const response = await fetch(`/api/challenges/${initialBoard.id}/report`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reason: selectedReason,
+          details: details.trim(),
+        }),
+      });
+
+      const payload = await response.json().catch(() => null) as { error?: string } | null;
+
+      if (!response.ok) {
+        throw new Error(payload?.error ?? "Não foi possível enviar a denúncia.");
+      }
+
+      setReportFeedback("Denúncia enviada com sucesso. A equipe será avisada.");
+      setDetails("");
+      setSelectedReason(REPORT_REASONS[0].value);
+      setIsReportOpen(false);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Não foi possível enviar a denúncia.";
+      setReportError(message);
+    } finally {
+      setIsSubmittingReport(false);
+    }
   }
 
   function handleProgress(errorCount: number, completed: boolean) {
@@ -30,7 +77,64 @@ export default function WordBoardScreen({ initialBoard }: { initialBoard: WordBo
         <header className="word-board-header">
           <span>Criado por: {board.board.creatorUsername}</span>
           <span>Publicado em: {board.board.publishedAt}</span>
-          <span>{board.board.errorCountLabel}: {board.errorCount}</span>
+
+          <div className="word-board-actions">
+            <span>{board.board.errorCountLabel}: {board.errorCount}</span>
+            <div className="report-button-wrap">
+              <button
+                type="button"
+                className="report-button"
+                aria-expanded={isReportOpen}
+                aria-controls="challenge-report-panel"
+                onClick={() => setIsReportOpen((previous) => !previous)}
+              >
+                <span aria-hidden="true">⚑</span>
+                Denunciar
+              </button>
+
+              {isReportOpen && (
+                <div id="challenge-report-panel" className="report-popover" role="dialog" aria-label="Denunciar desafio">
+                  <h3>Denunciar este jogo</h3>
+
+                  <div className="report-options">
+                    {REPORT_REASONS.map((reason) => (
+                      <label key={reason.value} className="report-option">
+                        <input
+                          type="radio"
+                          name="challenge-report-reason"
+                          value={reason.value}
+                          checked={selectedReason === reason.value}
+                          onChange={() => setSelectedReason(reason.value)}
+                        />
+                        <span>{reason.label}</span>
+                      </label>
+                    ))}
+                  </div>
+
+                  <textarea
+                    value={details}
+                    onChange={(event) => setDetails(event.target.value)}
+                    rows={4}
+                    maxLength={300}
+                    placeholder="Descreva o problema (opcional)"
+                    aria-label="Detalhes da denúncia"
+                  />
+
+                  <div className="report-actions">
+                    <button type="button" className="report-cancel" onClick={() => setIsReportOpen(false)}>
+                      Fechar
+                    </button>
+                    <button type="button" className="report-submit" onClick={() => void handleReportSubmit()} disabled={isSubmittingReport}>
+                      {isSubmittingReport ? "Enviando..." : "Enviar denúncia"}
+                    </button>
+                  </div>
+
+                  {reportError && <p className="report-error-message">{reportError}</p>}
+                  {reportFeedback && <p className="report-success-message">{reportFeedback}</p>}
+                </div>
+              )}
+            </div>
+          </div>
         </header>
 
         {board.isCompleted && (

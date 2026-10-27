@@ -9,8 +9,8 @@ export default async function AuthenticatedLayout({
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const result = await getPool().query<{ username: string; email: string }>(
-    "SELECT username, email FROM users WHERE id = $1",
+  const result = await getPool().query<{ username: string; email: string; is_admin: boolean }>(
+    "SELECT username, email, is_admin FROM users WHERE id = $1",
     [userId],
   );
   const user = result.rows[0];
@@ -18,7 +18,7 @@ export default async function AuthenticatedLayout({
 
   return (
     <>
-      <AuthenticatedNavbar user={user} />
+      <AuthenticatedNavbar user={{ username: user.username, email: user.email, isAdmin: user.is_admin }} />
       <div className="authenticated-content">{children}</div>
     </>
   );

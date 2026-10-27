@@ -8,6 +8,7 @@ type AuthenticatedNavbarProps = {
   user: {
     username: string;
     email: string;
+    isAdmin: boolean;
   };
 };
 
@@ -56,6 +57,14 @@ export default function AuthenticatedNavbar({ user }: AuthenticatedNavbarProps) 
         >
           +
         </Link>
+        <Link
+          className="reports-button"
+          href={user.isAdmin ? "/denuncias" : "/minhas-denuncias"}
+          aria-label={user.isAdmin ? "Ver painel de denúncias" : "Ver meus chamados"}
+          title={user.isAdmin ? "Ver painel de denúncias" : "Ver meus chamados"}
+        >
+          ⚑
+        </Link>
         <div className="account-menu">
           <button
             className="account-avatar"
@@ -70,6 +79,9 @@ export default function AuthenticatedNavbar({ user }: AuthenticatedNavbarProps) 
             <div className="account-popover">
               <span className="account-name">{user.username}</span>
               <span className="account-email">{user.email}</span>
+              <Link className="account-link" href={user.isAdmin ? "/denuncias" : "/minhas-denuncias"}>
+                {user.isAdmin ? "Painel de denúncias" : "Meus chamados"}
+              </Link>
               {logoutError && <p className="account-error" role="alert">{logoutError}</p>}
               <button className="account-logout" type="button" onClick={logout}>Sair</button>
             </div>

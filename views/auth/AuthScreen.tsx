@@ -2,12 +2,15 @@
 
 import { useAuthController } from "@/controllers/useAuthController";
 import GoogleAuthButton from "@/views/auth/GoogleAuthButton";
+import Image from "next/image";
 import Link from "next/link";
 
 function Brand({ onClick }: { onClick?: () => void }) {
   return (
     <Link className="brand-link" href="/" onClick={onClick} aria-label="Ir para a página inicial">
-      <h1 className="brand">Conecta</h1>
+<h1 className="brand">
+  <Image src="/logo.png" alt="Conecta" width={320} height={104} priority />
+</h1>
     </Link>
   );
 }

@@ -10,8 +10,17 @@ export async function getPublishedChallenges(): Promise<Challenge[]> {
     title: string;
     published_at: string;
     creator_username: string;
+    likes: string;
+    dislikes: string;
+    avg_errors: string;
   }>(
-    `SELECT c.id, c.title, c.published_at, u.username AS creator_username
+    `SELECT c.id, c.title, c.published_at, u.username AS creator_username,
+       (SELECT COUNT(*) FROM challenge_reactions r
+         WHERE r.challenge_id = c.id AND r.value = 1) AS likes,
+       (SELECT COUNT(*) FROM challenge_reactions r
+         WHERE r.challenge_id = c.id AND r.value = -1) AS dislikes,
+       COALESCE((SELECT AVG(ca.error_count) FROM challenge_attempts ca
+         WHERE ca.challenge_id = c.id AND ca.completed_at IS NOT NULL), 0) AS avg_errors
      FROM challenges c
      JOIN users u ON u.id = c.author_id
      WHERE c.status = 'published'
@@ -22,7 +31,9 @@ export async function getPublishedChallenges(): Promise<Challenge[]> {
     id: challenge.id,
     title: challenge.title,
     publishedAt: challenge.published_at,
-    errorCount: 0,
+    errorCount: Math.round(Number(challenge.avg_errors) * 10) / 10,
+    likes: Number(challenge.likes),
+    dislikes: Number(challenge.dislikes),
     words: [],
     creatorUsername: challenge.creator_username,
   }));

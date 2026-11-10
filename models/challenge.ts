@@ -2,6 +2,8 @@ export type Challenge = {
   id: string;
   title: string;
   publishedAt: string;
+  likes: number;
+  dislikes: number;
   errorCount: number;
   words: string[];
   creatorUsername: string;
@@ -13,6 +15,8 @@ export const challengesMock: Challenge[] = [
     title: "Palavras com tema de filmes",
     publishedAt: "2026-08-20",
     errorCount: 3,
+    likes: 0,
+    dislikes: 0,
     words: ["ator", "cena", "roteiro", "trilha"],
     creatorUsername: "Conecta",
   },
@@ -21,6 +25,8 @@ export const challengesMock: Challenge[] = [
     title: "Animais e habitats",
     publishedAt: "2026-08-18",
     errorCount: 1,
+    likes: 0,
+    dislikes: 0,
     words: ["tigre", "selva", "toca", "manada"],
     creatorUsername: "Conecta",
   },
@@ -29,6 +35,8 @@ export const challengesMock: Challenge[] = [
     title: "Tecnologia do dia a dia",
     publishedAt: "2026-08-16",
     errorCount: 5,
+    likes: 0,
+    dislikes: 0,
     words: ["nuvem", "chip", "rede", "sensor"],
     creatorUsername: "Conecta",
   },
@@ -37,6 +45,8 @@ export const challengesMock: Challenge[] = [
     title: "Comidas brasileiras",
     publishedAt: "2026-08-12",
     errorCount: 2,
+    likes: 0,
+    dislikes: 0,
     words: ["feijao", "tapioca", "aipim", "paoca"],
     creatorUsername: "Conecta",
   },

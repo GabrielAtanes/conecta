@@ -3,18 +3,25 @@
 import { useMemo, useState } from "react";
 import { Challenge } from "@/models/challenge";
 
-type SortMode = "az" | "errors" | "date";
+export type SortMode = "az" | "difficulty" | "likes" | "date";
 
 function sortChallenges(challenges: Challenge[], mode: SortMode) {
   const copy = [...challenges];
+  const byTitle = (left: Challenge, right: Challenge) =>
+    left.title.localeCompare(right.title, "pt-BR");
 
   if (mode === "az") {
-    copy.sort((left, right) => left.title.localeCompare(right.title, "pt-BR"));
+    copy.sort(byTitle);
     return copy;
   }
 
-  if (mode === "errors") {
-    copy.sort((left, right) => left.errorCount - right.errorCount);
+  if (mode === "difficulty") {
+    copy.sort((left, right) => right.errorCount - left.errorCount || byTitle(left, right));
+    return copy;
+  }
+
+  if (mode === "likes") {
+    copy.sort((left, right) => right.likes - left.likes || byTitle(left, right));
     return copy;
   }
 

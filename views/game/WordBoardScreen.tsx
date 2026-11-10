@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useWordBoardController } from "@/controllers/useWordBoardController";
 import { WordBoard } from "@/models/word-board";
+import ReactionButtons from "@/views/game/ReactionButtons";
+import CommentsSection from "@/views/game/CommentsSection";
 
 const REPORT_REASONS = [
   { value: "palavras_ofensivas", label: "Palavras ofensivas" },
@@ -183,6 +185,12 @@ export default function WordBoardScreen({ initialBoard }: { initialBoard: WordBo
             ))}
           </section>
         )}
+        {board.isCompleted && (
+  <>
+    <ReactionButtons challengeId={initialBoard.id} />
+    <CommentsSection challengeId={initialBoard.id} />
+  </>
+)}
       </section>
 
       {showVictoryCard && (

@@ -31,17 +31,24 @@ export default function LoggedHomeScreen({
             </button>
             <button
               type="button"
-              className={challenges.sortMode === "errors" ? "active" : ""}
-              onClick={() => challenges.setSortMode("errors")}
+              className={challenges.sortMode === "difficulty" ? "active" : ""}
+              onClick={() => challenges.setSortMode("difficulty")}
             >
-              Rating
+              Mais difíceis
+            </button>
+            <button
+              type="button"
+              className={challenges.sortMode === "likes" ? "active" : ""}
+              onClick={() => challenges.setSortMode("likes")}
+            >
+              Mais curtidos
             </button>
             <button
               type="button"
               className={challenges.sortMode === "date" ? "active" : ""}
               onClick={() => challenges.setSortMode("date")}
             >
-              Data de publicacao
+              Data de publicação
             </button>
           </div>
 
@@ -51,6 +58,11 @@ export default function LoggedHomeScreen({
                 <span className="challenge-title">{challenge.title}</span>
                 <span className="challenge-meta">
                   Criado por {challenge.creatorUsername} · {new Date(challenge.publishedAt).toLocaleDateString("pt-BR")}
+                </span>
+                <span className="challenge-stats">
+                  <span>👍 {challenge.likes}</span>
+                  <span>👎 {challenge.dislikes}</span>
+                  <span>Média de erros: {challenge.errorCount.toLocaleString("pt-BR")}</span>
                 </span>
               </Link>
             ))}

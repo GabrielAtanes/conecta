@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import NotificationBell from "@/views/navigation/NotificationBell";
+import Image from "next/image";
 
 type AuthenticatedNavbarProps = {
   user: {
@@ -37,8 +39,8 @@ export default function AuthenticatedNavbar({ user }: AuthenticatedNavbarProps) 
     <header className="app-navbar-shell">
       <nav className="app-navbar" aria-label="Navegação principal">
         <Link className="app-navbar-brand" href="/desafios" aria-label="Conecta, página de desafios">
-          Conecta
-        </Link>
+  <Image src="/logo.png" alt="Conecta" width={160} height={52} priority />
+</Link>
         <form className="app-navbar-search" action="/desafios" method="get" role="search">
           <input
             key={searchQuery}
@@ -65,6 +67,7 @@ export default function AuthenticatedNavbar({ user }: AuthenticatedNavbarProps) 
         >
           ⚑
         </Link>
+                <NotificationBell isAdmin={user.isAdmin} />
         <div className="account-menu">
           <button
             className="account-avatar"
